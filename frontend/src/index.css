@@ -38,7 +38,7 @@ code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monos
 
 /* Navbar */
 .site-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-.site-brand{font-weight:800;letter-spacing:0.3px;font-size:1.1rem;color:var(--accent)}
+.site-brand{font-weight:900;letter-spacing:0.3px;font-size:1.1rem;color:var(--accent);text-decoration: none}
 .nav-actions a{margin-left:12px;color:var(--muted);text-decoration:none}
 
 /* Matches grid */
@@ -88,6 +88,11 @@ code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monos
 
 /* Danger button */
 .btn-danger{background:linear-gradient(90deg,#ef4444,#dc2626);color:white;box-shadow:0 8px 30px rgba(239,68,68,0.12)}
+
+/* Remove default underlines from links globally, but keep a visible focus outline for keyboard users */
+a, a:link, a:visited { text-decoration: none; color: inherit }
+a:focus { outline: 3px solid rgba(124,58,237,0.14); outline-offset: 3px }
+a:hover { text-decoration: none }
 
 /* Responsive */
 @media (max-width:1000px){.matches-grid{grid-template-columns:repeat(2,1fr)}}
