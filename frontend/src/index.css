@@ -37,7 +37,7 @@ code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monos
 .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--accent)}
 
 /* Navbar */
-.site-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.site-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
 .site-brand{font-weight:900;letter-spacing:0.3px;font-size:1.1rem;color:var(--accent);text-decoration: none}
 .nav-actions a{margin-left:12px;color:var(--muted);text-decoration:none}
 
@@ -75,7 +75,7 @@ code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monos
 .testimonial{min-width:240px;padding:18px;border-radius:12px}
 
 /* Navbar improvements */
-.navbar-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-left:5px;padding-right:5px}
+.navbar-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-left:0;padding-right:0}
 .navbar-left{display:flex;align-items:center;gap:12px}
 .nav-links{display:flex;gap:12px;align-items:center}
 .nav-cta{display:flex;align-items:center;gap:8px}
@@ -93,6 +93,34 @@ code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monos
 a, a:link, a:visited { text-decoration: none; color: inherit }
 a:focus { outline: 3px solid rgba(124,58,237,0.14); outline-offset: 3px }
 a:hover { text-decoration: none }
+
+/* Mobile menu list helper */
+.mobile-menu-list{display:flex;flex-direction:column;gap:12px}
+
+/* Smooth theme transitions */
+html,body{transition:background .25s ease,color .25s ease}
+
+/* Light theme overrides (use data-theme attribute on <html>) */
+:root[data-theme="light"], html[data-theme="light"] {
+  --bg: #f7fafc;
+  --panel: #ffffff;
+  --card: rgba(2,6,23,0.03);
+  --muted: #475569;
+  --accent: #5b21b6; /* keep a purple accent */
+  --accent-2: #0ea5a0;
+  --glass: rgba(2,6,23,0.04);
+}
+
+/* Body adjustments for light theme */
+html[data-theme="light"] body {
+  color: #0b1220;
+  background: linear-gradient(180deg,#fbfdff 0%, #f4f7fb 70%);
+}
+
+/* Cards and panels for light theme */
+html[data-theme="light"] .card{background:linear-gradient(180deg, rgba(2,6,23,0.03), rgba(2,6,23,0.02));border:1px solid rgba(2,6,23,0.04);box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+html[data-theme="light"] .site-nav{background:transparent}
+html[data-theme="light"] .btn-ghost{border:1px solid rgba(11,17,32,0.06);color:var(--accent)}
 
 /* Responsive */
 @media (max-width:1000px){.matches-grid{grid-template-columns:repeat(2,1fr)}}
