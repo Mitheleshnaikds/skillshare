@@ -1,63 +1,55 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav style={{ 
-      display: "flex", 
-      justifyContent: "space-between", 
-      alignItems: "center", 
-      padding: "10px 20px", 
-      background: "#333", 
-      color: "white" 
-    }}>
-      <Link to="/" style={{ color: "white", textDecoration: "none", fontWeight: "bold" }}>
-        Skill Share
-      </Link>
+    <header className="site-nav">
+      <div className="navbar-inner container" style={{gap:400}}>
+        <div className="navbar-left">
+          <div className="site-brand"><Link to="/" >Skill Share</Link></div>
+        </div>
 
-      <div>
-        {!user ? (
-          <>
-            <Link 
-              to="/login" 
-              style={{ marginRight: "10px", color: "white", textDecoration: "none" }}
-            >
-              Login
-            </Link>
-            <Link 
-              to="/signup" 
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              Signup
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link 
-              to="/profile" 
-              style={{ marginRight: "10px", color: "white", textDecoration: "none" }}
-            >
-              Profile
-            </Link>
-            <button 
-              onClick={logout} 
-              style={{ 
-                background: "red", 
-                color: "white", 
-                border: "none", 
-                padding: "5px 10px", 
-                borderRadius: "5px", 
-                cursor: "pointer" 
-              }}
-            >
-              Logout
-            </button>
-          </>
-        )}
+        <nav className="nav-links">
+          
+        </nav>
+
+        <div className="nav-cta">
+          {!user ? (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/signup" className="btn btn-primary">Signup</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/profile" className="muted">Profile</Link>
+              <button onClick={logout} className="btn btn-danger">Logout</button>
+            </>
+          )}
+
+          <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Toggle menu">☰</button>
+        </div>
       </div>
-    </nav>
+
+      <div className={`mobile-menu ${open ? 'open' : ''}`} role="menu">
+        <div style={{display:'flex',flexDirection:'column',gap:30}}>
+          <Link to="/" onClick={() => setOpen(false)}>Home</Link>
+          {!user ? (
+            <>
+              <Link to="/login" onClick={() => setOpen(false)}>Login</Link>
+              <Link to="/signup" onClick={() => setOpen(false)} className="btn btn-primary">Signup</Link>
+            </>
+          ) : (
+            <>
+
+              <button onClick={() => { logout(); setOpen(false); }} className="btn btn-danger">Logout</button>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
   );
 }

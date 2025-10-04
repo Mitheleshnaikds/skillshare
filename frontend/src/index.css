@@ -1,13 +1,107 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root{
+  --bg: #071029;
+  --panel: #081223;
+  --card: rgba(255,255,255,0.02);
+  --muted: #9aa4b2;
+  --accent: #7c3aed;
+  --accent-2: #5eead4;
+  --glass: rgba(255,255,255,0.04);
+  --max-width: 1100px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #e6eef6;
+  background: linear-gradient(180deg,#071029 0%, #07101a 70%);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
+
+img{max-width:100%;height:auto;display:block}
+
+code{font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace}
+
+/* Layout helpers */
+.container{max-width:var(--max-width);margin:0 auto;padding:0 16px}
+.center{display:flex;align-items:center;justify-content:center}
+
+/* Card */
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 6px 22px rgba(2,6,23,0.6)}
+
+/* Buttons */
+.btn{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;font-weight:600}
+.btn-primary{background:linear-gradient(90deg,var(--accent),#5b21b6);color:white;box-shadow:0 8px 30px rgba(124,58,237,0.18)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--accent)}
+
+/* Navbar */
+.site-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.site-brand{font-weight:800;letter-spacing:0.3px;font-size:1.1rem;color:var(--accent)}
+.nav-actions a{margin-left:12px;color:var(--muted);text-decoration:none}
+
+/* Matches grid */
+.matches-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.match-card{transition:transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s; will-change:transform}
+.match-card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+.match-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.badge{background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:999px;font-size:.85rem;color:var(--accent-2)}
+
+/* Chat */
+.chat-wrap{display:flex;flex-direction:column;height:70vh;max-height:760px}
+.messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bubble{max-width:78%;padding:10px 14px;border-radius:14px}
+.bubble.me{margin-left:auto;background:linear-gradient(90deg,#d1ffd1,#b7f7b7);color:#002700}
+.bubble.other{background:rgba(255,255,255,0.03);color:var(--muted)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .5s ease both}
+
+@keyframes popIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+.pop{animation:popIn .42s cubic-bezier(.2,.9,.3,1) both}
+
+/* Hero and feature styling */
+.hero{position:relative;overflow:hidden;border-radius:14px;padding:56px 20px;color:white}
+.hero-decor{position:absolute;right:-80px;top:-40px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.01));transform:rotate(25deg);filter:blur(18px);pointer-events:none}
+.hero-title{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.02;margin:0 0 8px}
+.hero-sub{max-width:900px;margin:0 auto 18px;color:rgba(255,255,255,0.9)}
+
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feature-card{padding:22px;border-radius:12px;min-height:140px}
+
+.testimonials{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+.testimonial{min-width:240px;padding:18px;border-radius:12px}
+
+/* Navbar improvements */
+.navbar-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-left:5px;padding-right:5px}
+.navbar-left{display:flex;align-items:center;gap:12px}
+.nav-links{display:flex;gap:12px;align-items:center}
+.nav-cta{display:flex;align-items:center;gap:8px}
+.nav-cta a, .nav-cta button{color:inherit;text-decoration:none}
+.hamburger{display:none;border:0;background:transparent;color:inherit;font-size:1.2rem}
+
+/* Mobile menu overlay */
+.mobile-menu{position:absolute;left:0;right:0;top:64px;background:var(--panel);padding:12px;border-top:1px solid rgba(255,255,255,0.02);box-shadow:0 8px 30px rgba(2,6,23,0.6);z-index:60;display:none}
+.mobile-menu.open{display:block}
+
+/* Danger button */
+.btn-danger{background:linear-gradient(90deg,#ef4444,#dc2626);color:white;box-shadow:0 8px 30px rgba(239,68,68,0.12)}
+
+/* Responsive */
+@media (max-width:1000px){.matches-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:980px){.features-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){.nav-links{display:none}.hamburger{display:inline-flex}}
+@media (max-width:640px){
+  .matches-grid{grid-template-columns:1fr}
+  .site-nav{flex-direction:column;gap:8px;align-items:flex-start}
+  .chat-wrap{height:60vh}
+  .features-grid{grid-template-columns:1fr}
+  .hero{padding:32px 12px}
+  .hero-decor{display:none}
+}
+
+/* Small utilities */
+.muted{color:var(--muted)}
+.spaced{margin-top:12px}
