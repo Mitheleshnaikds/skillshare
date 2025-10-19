@@ -101,14 +101,12 @@ export default function Navbar() {
               <Link to="/dashboard" onClick={closeMenu} className="btn btn-ghost">
                 Dashboard
               </Link>
-              <Link to="/matches" onClick={closeMenu} className="btn btn-ghost">
-                Matches
-              </Link>
-              <Link to="/inbox" onClick={closeMenu} className="btn btn-ghost">
+  
+              <Link to="/chats" onClick={closeMenu} className="btn btn-ghost">
                 Inbox
               </Link>
               <Link to="/exchanges" onClick={closeMenu} className="btn btn-ghost">
-                Exchanges
+                Matches
               </Link>
               <Link to="/profile" onClick={closeMenu} className="btn btn-ghost">
                 Profile

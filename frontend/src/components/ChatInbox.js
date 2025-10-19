@@ -11,7 +11,8 @@ export default function ChatInbox() {
 
   // ✅ Connect Socket.IO once
   useEffect(() => {
-    const s = io("http://localhost:5000", {
+  const socketUrl = process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+  const s = io(socketUrl, {
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,

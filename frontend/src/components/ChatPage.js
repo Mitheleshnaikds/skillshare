@@ -15,7 +15,8 @@ export default function ChatPage() {
 
   // ✅ Initialize socket connection once
   useEffect(() => {
-    const s = io("http://localhost:5000", {
+  const socketUrl = process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+  const s = io(socketUrl, {
       transports: ['websocket', 'polling'], // Ensure both transports are available
       reconnection: true,
       reconnectionAttempts: 5,
