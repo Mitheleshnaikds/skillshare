@@ -9,6 +9,8 @@ export default function MatchesDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [requestingExchange, setRequestingExchange] = useState(null);
+  const [existingExchanges, setExistingExchanges] = useState([]);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -29,17 +31,68 @@ export default function MatchesDashboard() {
     }
   };
 
+  const fetchExchanges = async () => {
+    try {
+      const res = await API.get("/exchanges");
+      setExistingExchanges(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       await fetchUser();
       await fetchMatches();
+      await fetchExchanges();
       setLoading(false);
     };
     fetchData();
   }, []);
 
   if (loading) return <p className="container spaced">Loading...</p>;
+
+  const requestExchange = async (teacherId, skill) => {
+    try {
+      setRequestingExchange(teacherId);
+      await API.post("/exchanges", {
+        teacherId,
+        skill,
+        scheduledAt: new Date(),
+        notes: `Requesting to learn ${skill}`
+      });
+      alert(`Exchange request sent for ${skill}!`);
+      navigate("/exchanges");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.msg || "Failed to request exchange");
+    } finally {
+      setRequestingExchange(null);
+    }
+  };
+
+  // Check if an active exchange request already exists with this teacher
+  const hasExistingExchange = (teacherId) => {
+    return existingExchanges.some(
+      (exchange) =>
+        exchange.teacherId._id === teacherId &&
+        (exchange.status === "pending" || exchange.status === "accepted")
+    );
+  };
+
+  // Filter out users who already have accepted exchanges or pending requests
+  const getFilteredMatches = () => {
+    return matches.filter((match) => {
+      // Check if there's an existing exchange (pending, accepted, or completed)
+      const hasExchange = existingExchanges.some(
+        (exchange) =>
+          (exchange.teacherId._id === match._id || exchange.studentId._id === match._id) &&
+          (exchange.status === "pending" || exchange.status === "accepted" || exchange.status === "completed")
+      );
+      return !hasExchange; // Only show if no active exchange exists
+    });
+  };
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
@@ -71,19 +124,51 @@ export default function MatchesDashboard() {
 
       <section className="spaced">
         <h3>Matching Users</h3>
-        {matches.length === 0 ? (
-          <p className="muted">No matches found.</p>
+        {getFilteredMatches().length === 0 ? (
+          <p className="muted">No new matches found. Check the Exchanges page to manage your existing connections.</p>
         ) : (
-          matches.map((match) => (
-            <div key={match._id} className="card spaced">
-              <p><strong>{match.name}</strong></p>
-              <p className="muted"><strong>Offered:</strong> {match.skillsOffered.join(", ")}</p>
-              <p className="muted"><strong>Wanted:</strong> {match.skillsWanted.join(", ")}</p>
-              <div style={{marginTop:8}}>
-                <button className="btn btn-primary" onClick={() => navigate(`/chat/${match._id}`)}>Message</button>
+          <div className="matches-grid">
+            {getFilteredMatches().map((match) => (
+              <div key={match._id} className="card card-interactive pop">
+                <h3 style={{ margin: '0 0 0.5rem 0' }}>{match.name}</h3>
+                <div className="mb-2">
+                  <p className="muted text-sm" style={{ margin: '0.25rem 0' }}>
+                    <strong>Offers:</strong> {match.skillsOffered.join(", ")}
+                  </p>
+                  <p className="muted text-sm" style={{ margin: '0.25rem 0' }}>
+                    <strong>Wants:</strong> {match.skillsWanted.join(", ")}
+                  </p>
+                </div>
+                <div className="flex gap-2 flex-wrap mt-2">
+                  <button 
+                    className="btn btn-primary btn-sm" 
+                    onClick={() => navigate(`/chat/${match._id}`)}
+                  >
+                    💬 Message
+                  </button>
+                  {match.skillsOffered.length > 0 && (
+                    hasExistingExchange(match._id) ? (
+                      <button 
+                        className="btn btn-sm" 
+                        style={{ background: '#f59e0b', color: '#fff', cursor: 'not-allowed', opacity: 0.7 }}
+                        disabled
+                      >
+                        ⏳ Request Pending
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn btn-secondary btn-sm" 
+                        onClick={() => requestExchange(match._id, match.skillsOffered[0])}
+                        disabled={requestingExchange === match._id}
+                      >
+                        {requestingExchange === match._id ? 'Requesting...' : '📚 Request Exchange'}
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </section>
 

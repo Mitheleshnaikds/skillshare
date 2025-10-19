@@ -4,6 +4,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const http = require("http");
 const { Server } = require("socket.io");
+const Message = require('./models/Message'); // Import Message model
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -24,45 +26,75 @@ app.use('/api/exchanges', require('./routes/exchanges'));
 app.use("/api/messages", require("./routes/messages"));
 
 // Socket.io real-time messaging
-let onlineUsers = {}; // store userId => socketId
+const onlineUsers = new Map(); // Use Map instead of object for better methods
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  console.log("✅ User connected:", socket.id);
 
-  // when user logs in, send their userId
-  socket.on("join", (userId) => {
-    onlineUsers[userId] = socket.id;
-    console.log("Online users:", onlineUsers);
+  // Send the current snapshot of online users to the newly connected client
+  try {
+    const currentOnline = Array.from(onlineUsers.keys());
+    socket.emit("onlineUsers", currentOnline);
+  } catch (e) {
+    console.error("Failed to emit onlineUsers snapshot:", e);
+  }
+
+  // When user comes online
+  socket.on("user-online", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    console.log(`👤 User ${userId} is online`);
+    console.log("Online users:", Array.from(onlineUsers.keys()));
+    
+    // Broadcast to all clients that this user is online
+    io.emit("updateUserStatus", { userId, status: "online" });
   });
 
-  // listen for sending message
- socket.on("send-message", async ({ from, to, text }) => {
+  // Listen for sending message (matching frontend event name)
+  socket.on("sendMessage", async (message) => {
     try {
-      // 1️⃣ Save message to DB
-      const message = await Message.create({ from, to, text });
-
-      // 2️⃣ Emit message to receiver if online
-      const receiverSocket = onlineUsers[to];
-      if (receiverSocket) {
-        io.to(receiverSocket).emit("receive-message", message);
+      console.log("📨 Message received:", message);
+      
+      // Get receiver's socket ID
+      const receiverSocketId = onlineUsers.get(message.to);
+      const senderSocketId = onlineUsers.get(message.from);
+      
+      // Emit to receiver if they're online
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("receiveMessage", message);
+        console.log(`✅ Sent to receiver: ${message.to}`);
       }
-
-      // 3️⃣ Emit back to sender for confirmation
-      socket.emit("receive-message", message);
+      
+      // Also emit back to sender for confirmation
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("receiveMessage", message);
+        console.log(`✅ Confirmed to sender: ${message.from}`);
+      }
     } catch (err) {
-      console.error("Failed to save message:", err);
+      console.error("❌ Failed to handle message:", err);
     }
   });
 
-
   socket.on("disconnect", () => {
-    for (let id in onlineUsers) {
-      if (onlineUsers[id] === socket.id) {
-        delete onlineUsers[id];
+    // Find and remove disconnected user
+    let disconnectedUserId = null;
+    for (let [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        disconnectedUserId = userId;
+        onlineUsers.delete(userId);
         break;
       }
     }
-    console.log("User disconnected:", socket.id);
+    
+    if (disconnectedUserId) {
+      console.log(`👋 User ${disconnectedUserId} disconnected`);
+      io.emit("updateUserStatus", { 
+        userId: disconnectedUserId, 
+        status: "offline",
+        lastSeen: new Date()
+      });
+    }
+    
+    console.log("Remaining online users:", Array.from(onlineUsers.keys()));
   });
 });
 

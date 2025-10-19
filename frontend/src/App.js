@@ -8,6 +8,7 @@ import Skills from "./components/Skills";
 import ChatPage from "./components/ChatPage";
 import ChatInbox from "./components/ChatInbox";
 import Profile from "./components/Profile";
+import Exchanges from "./components/Exchanges";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./components/HomePage";
 
@@ -52,6 +53,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ChatInbox />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/exchanges" 
+            element={
+              <ProtectedRoute>
+                <Exchanges />
               </ProtectedRoute>
             } 
           />
