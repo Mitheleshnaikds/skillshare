@@ -1,0 +1,21 @@
+# Node
+node_modules/
+
+# Env files (do not commit secrets)
+.env
+**/.env
+**/.env.*
+!.env.example
+**/!.env.example
+
+# Build outputs
+frontend/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
